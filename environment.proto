@@ -1,0 +1,63 @@
+syntax = "proto3"
+
+package retro.ai;
+
+//
+// Environment properties
+//
+// Defines the immutable properties of the game environment.
+//
+message Environment {
+  //
+  // Version of the Environment message
+  //
+  uint32 version = 1;
+
+  //
+  // Multihashes of the game being played
+  //
+  // See multihash protocol at https://github.com/multiformats/multihash. Must
+  // include SHA-256 and MD5 hashes.
+  //
+  repeated bytes game_hash = 2;
+
+  //
+  // Canonical emulator ID used for the stream
+  //
+  string emulator_id = 3;
+
+  //
+  // Video frame width
+  //
+  // The width of the frame, in pixels.
+  //
+  uint32 video_width = 4;
+
+  //
+  // Video frame height
+  //
+  // The height of the frame, in pixels.
+  //
+  uint32 video_height = 5;
+
+  //
+  // Frame time
+  //
+  // The frame time in seconds, reported by the emulator. The maximum frame time
+  // is 1 second. This field may be 0, in which case the frame time should be
+  // determined by which system is being emulated.
+  //
+  // The frame time goes from 0.0 (0x0) to 1.0 (UINT64_MAX, 0xFFFFFFFFFFFFFFFF).
+  //
+  uint64 frame_time = 6;
+  
+  //
+  // Audio sample rate
+  //
+  // The audio sample rate in Hz, reported by the emulator.
+  //
+  // This field may be zero, in which case the sample rate should be determined
+  // by which system is being emulated.
+  //
+  uint32 sample_rate = 7;
+}

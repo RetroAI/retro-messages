@@ -1,0 +1,76 @@
+syntax = "proto3"
+
+package retro.ai;
+
+//
+// Strategy message
+//
+// This represents the strategy or goal that the player's next action should
+// undertake. Used to direct a player or AI.
+//
+// At the moment, a strategy must be a single string or spoken audio captured
+// from a microphone. Eventually, a framework may be needed for more advanced
+// strategies.
+//
+message Strategy {
+  //
+  // Version of the Strategy message
+  //
+  uint32 version = 1;
+
+  //
+  // Timestamp when the current strategy was set
+  //
+  uint64 initial_timestamp = 2;
+
+  //
+  // The strategy if given as text
+  //
+  optional string strategy_text = 3;
+
+  //
+  // The strategy if given as microphone input
+  //
+  optional MicrophoneAudio strategy_mic = 4;
+}
+
+//
+// Audio captured by the microphone
+//
+message MicrophoneAudio {
+  //
+  // Audio path
+  //
+  // The relative path to the audio file. The path can include a directory. The
+  // path is relative to the root of the state data. Parent directories (..) are
+  // disallowed.
+  //
+  string path = 1;
+
+  //
+  // Audio format
+  //
+  // The format of the audio data.
+  //
+  enum AudioFormat {
+    ENCODED         = 0; // The encoding is given by the file type or container
+    FORMAT_S16LE    = 1; // PCM signed 16-bit little endian
+  }
+  AudioFormat format = 2;
+
+  //
+  // Audio data size
+  //
+  // The size of the audio file for PCM formats. If the audio data is encoded,
+  // this field is optional and may be set to 0.
+  //
+  uint32 size = 3;
+
+  //
+  // Textual output of speech recognition
+  //
+  // If speech recognition has been performed on this audio, it can be included
+  // here.
+  //
+  optional string recognized_text = 4;
+}

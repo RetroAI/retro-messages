@@ -1,0 +1,98 @@
+syntax = "proto3"
+
+package retro.ai;
+
+//
+// Reward message
+//
+// This message contains the cumulative reward for entering the state.
+//
+message Reward {
+  //
+  // Version of the Reward message
+  //
+  uint32 version = 1;
+
+  //
+  // Achievements from RetroAchievements.org
+  //
+  optional RetroAchievements retro_achievements = 2;
+}
+
+//
+// Achievements provided by RetroAchievement.org
+//
+message RetroAchievements {
+  //
+  // RetroAchievements.org console ID
+  //
+  // The enum values must match the console IDs on RetroAchievements.org.
+  //
+  enum ConsoleID {
+    CONSOLE_UNKNOWN          = 0;
+    CONSOLE_MEGA_DRIVE       = 1;
+    CONSOLE_NINTENDO_64      = 2;
+    CONSOLE_SUPER_NINTENDO   = 3;
+    CONSOLE_GAMEBOY          = 4;
+    CONSOLE_GAMEBOY_ADVANCE  = 5;
+    CONSOLE_GAMEBOY_COLOR    = 6;
+    CONSOLE_NINTENDO         = 7;
+    CONSOLE_PC_ENGINE        = 8;
+    CONSOLE_SEGA_CD          = 9;
+    CONSOLE_SEGA_32X         = 10;
+    CONSOLE_MASTER_SYSTEM    = 11;
+  }
+  ConsoleID = 1;
+
+  //
+  // The list of achievements
+  //
+  repeated RetroAchievement achievements = 2;
+}
+
+//
+// Achievement from RetroAchievement.org
+//
+messave RetroAchievement
+{
+  //
+  // Achievement description
+  //
+  RetroAchievementDescription description = 1;
+
+  //
+  // Mechanics needed to obtain the achievement
+  RetroAchievementMechanics mechanics = 2;
+
+  //
+  // True if this achievement has been achieved, False otherwise
+  //
+  bool achieved = 2;
+
+  // TODO: Scalar values of achievement progress, goal, etc
+}
+
+//
+// Descriptive fields for each RetroAchievement
+//
+message RetroAchievementDescription {
+  uint32 id = 1;
+  string title = 2;
+  string description = 3;
+  string author = 4;
+  string badge = 5;
+  uint32 points = 6;
+  uint32 dirty = 7;
+  bool softcore = 8;
+  bool hardcore = 9;
+  uint32 created = 10;
+  uint32 modified = 11;
+  bool official = 12;
+}
+
+//
+// The operations needed to obtain the achievement
+//
+message RetroAchievementMechanics {
+  // TODO
+}

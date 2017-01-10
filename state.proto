@@ -1,0 +1,205 @@
+syntax = "proto3"
+
+package retro.ai;
+
+//
+// State message
+//
+// This message contains the state of the current frame. This includes:
+//
+//   - Video, or omitted if the previous frame is duplicated
+//   - Audio, if available (possibly multiple streams)
+//   - Memory, if available (possibly multiple types)
+//   - Haptic feedback, if available for the current controllers
+//
+message State {
+  //
+  // Version of the State message
+  //
+  uint32 version = 1;
+
+  //
+  // Timestamp of the messages for this frame
+  //
+  // Timestamps start at 0 for the first frame and monotonically increases by 1 
+  // for each subsequent frame.
+  //
+  uint64 timestamp = 2;
+
+  //
+  // The video state
+  //
+  optional VideoState video = 3;
+
+  //
+  // The audio state
+  //
+  // Multiple streams can be present (e.g. for Wii Remotes).
+  //
+  repeated AudioState audio = 4;
+
+  //
+  // The memory state
+  //
+  // Multiple memory types can be present. If a type of memory is unavailable,
+  // it can be excluded from this field.
+  //
+  repeated MemoryState memory = 5;
+
+  //
+  // The haptic feedback state
+  //
+  // The order/indices of this array are determined by the controllers
+  // defined in the Action message.
+  //
+  repeated FeebackState feedback = 6;
+}
+
+//
+// The video state
+//
+message VideoState {
+  //
+  // Video path
+  //
+  // The relative path to the video file. The path can include a directory. The
+  // path is relative to the root of the state data. Parent directories (..) are
+  // disallowed.
+  //
+  string path = 1;
+
+  //
+  // Video format
+  //
+  // The format of the video data.
+  //
+  enum VideoFormat {
+    ENCODED         = 0; // The encoding is given by the file type or container
+    FORMAT_0RGB8888 = 1; // Raw 0RGB8888 pixel data
+    FORMAT_RGB565   = 2; // Raw RGB565 pixel data
+    FORMAT_0RGB1555 = 3; // Raw 0RGB1555 pixel data
+    FORAMT_YUV420P  = 4; // Raw YUV420P pixel data
+  }
+  VideoFormat format = 2;
+
+  //
+  // Video data size
+  //
+  // The size of the video file for raw pixel formats. If the video data is
+  // encoded, this field is optional and may be set to 0.
+  //
+  uint32 size = 3;
+}
+
+//
+// Game audio played during this state
+//
+message AudioState {
+  //
+  // Audio path
+  //
+  // The same rules as the video path apply.
+  //
+  string path = 1;
+
+  //
+  // Audio format
+  //
+  // The format of the audio data.
+  //
+  enum AudioFormat {
+    ENCODED         = 0; // The encoding is given by the file type or container
+    FORMAT_S16LE    = 1; // PCM signed 16-bit little endian
+  }
+  AudioFormat format = 2;
+
+  //
+  // Channel layout
+  //
+  // The channel layout of the audio data.
+  //
+  enum ChannelLayout {
+    CHANNEL_SINGLE  = 0; // Single audio channel
+    CHANNEL_L_R     = 1; // Two channel audio, L + R channels interleaved
+  }
+  ChannelLayout channel_layout = 3;
+
+  //
+  // Audio data size
+  //
+  // The size of the audio file for PCM formats. If the audio data is encoded,
+  // this field is optional and may be set to 0.
+  //
+  uint32 size = 4;
+
+  //
+  // System flag
+  //
+  // False for system audio, True for controller audio (e.g. Wii Remote)
+  //
+  optional bool controller_audio = 5;
+
+  //
+  // Controller port
+  //
+  // Zero-indexed controller port, or ignored if system is True
+  //
+  optional uint32 controller_port = 6;
+
+  //
+  // Sample rate
+  //
+  // Controller audio sample rate, or ignored if system is True.
+  //
+  // (System sample rate is set in Environment message.)
+  //
+  optional uint32 controller_sample_rate = 7;
+}
+
+//
+// Serialized state of an emulator or game memory region
+//
+message MemoryState {
+  //
+  // Memory data path
+  //
+  // The same rules as the video path apply.
+  //
+  string path = 1;
+
+  //
+  // Memory type
+  //
+  // The type of memory that has been serialized.
+  //
+  enum MemoryType {
+    SAVE_STATE   = 0; // Serialized emulator state
+    IN_GAME_SAVE = 1; // Save RAM, usually found on a game cartridge backed up
+    RTC          = 2; // Real-time clock
+  }
+  MemoryType type = 2;
+
+  //
+  // Memory data size
+  //
+  // The size of the memory file.
+  //
+  uint32 size = 3;
+}
+
+//
+// Haptic feedback for this state
+//
+message FeedbackState
+{
+  //
+  // Motor strength
+  //
+  // Motor values are sorted in alphabetical order by motor name. Motor names
+  // are defined by the controller profile used in the Action message.
+  //
+  // The motor strength goes from 0 (fully deactivated) to 0x7fff (fully
+  // activated).
+  //
+  repeated uint32 motors = 1;
+}

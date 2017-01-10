@@ -1,0 +1,124 @@
+syntax = "proto3"
+
+package retro.ai;
+
+//
+// Action message
+//
+// This message represents the actions taken by all players in the next state.
+//
+message Action {
+  //
+  // Version of the Action message
+  //
+  uint32 version = 1;
+
+  //
+  // Player input
+  //
+  // Order/indices matches the zero-indexed player number, which on consoles is
+  // the port the player's controller is connected to. If there are less players
+  // than ports, the port is assumed to have no controller attached.
+  //
+  repeated PlayerAction players = 2;
+}
+
+//
+// Possible actions a player can take
+//
+// Due to network issues, actions are stochastic and may not be performed
+// correctly.
+//
+message PlayerAction {
+  //
+  // Input coming from the player's controller
+  //
+  // This can be omitted if no controller is plugged in.
+  //
+  optional ControllerInput input = 1;
+
+  //
+  // Instruction to reset the game
+  //
+  // This action might not be honored.
+  //
+  bool reset = 2;
+
+  //
+  // Instruction to freak the fuck out
+  //
+  // This action might not be honored.
+  //
+  bool ragequit = 3;
+}
+
+//
+// Controller input
+//
+message Controller {
+  //
+  // Canonical controller ID
+  //
+  string controller_id = 1;
+
+  //
+  // Digital button input
+  //
+  // Digital button names are defined by the controller profile. Buttons must
+  // be ordered by name in alphabetical order. This must include all digital
+  // buttons defined by the controller profile.
+  //
+  // The value of each button is True if pressed, False if unpressed.
+  //
+  repeated bool digital_buttons = 2;
+
+  //
+  // Analog button input
+  //
+  // Analog buttons include triggers and pressure-sensitive buttons.
+  //
+  // Analog button names are defined by the controller profile. Buttons must
+  // be ordered by name in alphabetical order. This must include all analog
+  // buttons defined by the controller profile.
+  //
+  // This value can range from 0x0 (unpressed) to 0x7FFF / 32767 (fully
+  // pressed).
+  //
+  repeated uint32 analog_buttons = 3;
+
+  //
+  // Analog stick input  
+  //
+  // Analog stick names are defined by the controller profile. Analog sticks
+  // must be ordered by name in alphabetical order. This must include all analog
+  // sticks defined by the controller profile.
+  //
+  repeated AnalogStick analog_sticks = 4;
+}
+
+//
+// Analog stick message
+//
+message AnalogStick {
+  //
+  // Horizontal axis
+  //
+  // Positive value is pressing the analog stick up. Negative value is pressing
+  // the analog stick down.
+  //
+  // This value can range from -0x7FFFF / -32767 (fully up) to 0x7FFF / 32767
+  // (fully down). A value of 0 means centered.
+  //
+  int32 x = 1;
+
+  //
+  // Vertical axis
+  //
+  // Positive value is pressing the analog stick right. Negative value is
+  // pressing the analog stick left.
+  //
+  // This value can range from -0x7FFFF / -32767 (fully left) to 0x7FFF / 32767
+  // (fully right). A value of 0 means centered.
+  //
+  int32 y = 2;
+}
