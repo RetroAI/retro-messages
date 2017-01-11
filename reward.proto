@@ -62,6 +62,7 @@ messave RetroAchievement
 
   //
   // Mechanics needed to obtain the achievement
+  //
   RetroAchievementMechanics mechanics = 2;
 
   //
