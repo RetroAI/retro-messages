@@ -109,7 +109,7 @@ message AnalogStick {
   // This value can range from -0x7FFFF / -32767 (fully up) to 0x7FFF / 32767
   // (fully down). A value of 0 means centered.
   //
-  int32 x = 1;
+  sint32 x = 1;
 
   //
   // Vertical axis
@@ -120,5 +120,5 @@ message AnalogStick {
   // This value can range from -0x7FFFF / -32767 (fully left) to 0x7FFF / 32767
   // (fully right). A value of 0 means centered.
   //
-  int32 y = 2;
+  sint32 y = 2;
 }
